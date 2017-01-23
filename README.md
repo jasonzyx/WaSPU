@@ -106,17 +106,17 @@ WaSPUs(Zstat, corSNP, weights, pow = c(1:6, Inf), n.perm = 1e3)
 ### Calculate a correlation matrix of a set of SNPs using Hapmap as reference panel
 
 1. Download hapmap reference data, Plink software and an example file "ex_mysnps.txt"
+
 ```
-wget https://github.com/jasonzyx/WaSPU_resource/blob/master/ex_mysnps.txt
-wget https://github.com/jasonzyx/WaSPU_resource/blob/master/hapmap_CEU.zip
-wget https://github.com/jasonzyx/WaSPU_resource/blob/master/plink
+wget https://github.com/jasonzyx/WaSPU_resource/archive/master.zip
 ```
 
 2. uncompress files
 
 ```
-unzip hapmap_CEU.zip
-rm hapmap_CEU.zip
+unzip WaSPU_resource-master.zip
+rm WaSPU_resource-master.zip
+cd WaSPU_resource-master
 ```
 
 3. some system may need to change accessbility of plink, in order to use.
@@ -128,6 +128,7 @@ chmod 777 plink
 4. fire up R
 
 ```
+source("impute.R")
 system("mkdir temp")
 mysnps <- read.table("ex_mysnps.txt", header = T)
 mysnps$SNP_map = paste0(mysnps$CHR,":",mysnps$BP)
@@ -162,5 +163,6 @@ corMat <- cor(X0)
 corMat[1:5, 1:5]
 ```
 
+The object "corMat" is the correlation matrix.
 
 
