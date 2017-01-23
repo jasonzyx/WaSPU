@@ -105,13 +105,13 @@ WaSPUs(Zstat, corSNP, weights, pow = c(1:6, Inf), n.perm = 1e3)
 
 ### Calculate a correlation matrix of a set of SNPs using Hapmap as reference panel
 
-1. Download hapmap reference data, Plink software and an example file "ex_mysnps.txt"
+* Download hapmap reference data, Plink software and an example file "ex_mysnps.txt"
 
 ```
 wget https://github.com/jasonzyx/WaSPU_resource/archive/master.zip
 ```
 
-2. uncompress files
+* Uncompress files
 
 ```
 unzip WaSPU_resource-master.zip
@@ -119,13 +119,13 @@ rm WaSPU_resource-master.zip
 cd WaSPU_resource-master
 ```
 
-3. some system may need to change accessbility of plink, in order to use.
+* Some system may need to change accessbility of plink, in order to use.
 
 ```
 chmod 777 plink
 ```
 
-4. fire up R
+* Fire up R
 
 ```
 source("impute.R")
