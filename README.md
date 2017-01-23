@@ -23,7 +23,7 @@ This is an R package for performing association study by integrating Genomic and
 1. Installation
 2. Association Testing with Individual Level Data
 3. Association Testing with Summary Statistics
-
+4. How to get a correlation matrix of a set of SNPs using Hapmap as reference panel
 ---
 
 ### Installation
@@ -102,5 +102,65 @@ WaSPUs(Zstat, corSNP, weights, pow = c(1:6, Inf), n.perm = 1e3)
 ## $pUminP
 ## [1] 0.5028263
 ```
+
+### Calculate a correlation matrix of a set of SNPs using Hapmap as reference panel
+
+1. Download hapmap reference data, Plink software and an example file "ex_mysnps.txt"
+```
+wget https://github.com/jasonzyx/WaSPU_resource/blob/master/ex_mysnps.txt
+wget https://github.com/jasonzyx/WaSPU_resource/blob/master/hapmap_CEU.zip
+wget https://github.com/jasonzyx/WaSPU_resource/blob/master/plink
+```
+
+2. uncompress files
+
+```
+unzip hapmap_CEU.zip
+rm hapmap_CEU.zip
+```
+
+3. some system may need to change accessbility of plink, in order to use.
+
+```
+chmod 777 plink
+```
+
+4. fire up R
+
+```
+system("mkdir temp")
+mysnps <- read.table("ex_mysnps.txt", header = T)
+mysnps$SNP_map = paste0(mysnps$CHR,":",mysnps$BP)
+write.table(mysnps$SNP_map,"temp/mysnps.txt",row.names=F,col.names=F,quote=F,append=F)
+write.table(mysnps[,c("SNP_map","refAllele")],"temp/refAllele.txt",row.names=F,col.names=F,quote=F,append=F)
+system(paste0("./plink --bfile hapmap_CEU_r23a_hg19", 
+              " --extract ", "temp/mysnps.txt --recodeA --recode-allele ",
+              "temp/refAllele.txt --out ","temp/ex"))
+dat = read.table("temp/ex.raw",header=T)
+X0 = dat[,7:ncol(dat)]
+X00 = as.matrix(X0)
+X0 = impute(X0)
+X0 = as.matrix(X0)
+### remove SNPs w/o variation
+X0_sd <- apply(X0,2,sd)
+X0 <- X0[,X0_sd!=0]
+
+
+snp.extract = colnames(X0)
+for(l in 1:length(snp.extract)) snp.extract[l] <- substr(snp.extract[l],2,nchar(snp.extract[l])-2)   
+snp.extract = gsub("[.]", ":", snp.extract)
+
+colnames(X0) <- snp.extract
+
+commonSNPs = intersect(snp.extract, mysnps$SNP_map)
+
+mysnps <- mysnps[match(commonSNPs,mysnps$SNP_map),]  
+X0 <- X0[,commonSNPs] 
+
+corMat <- cor(X0)
+
+corMat[1:5, 1:5]
+```
+
 
 
